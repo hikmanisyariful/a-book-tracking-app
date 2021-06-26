@@ -5,8 +5,21 @@ import { Link } from "react-router-dom";
 import BooksBasedCategory from "./BooksBasedCategory";
 
 class ListBookCategories extends React.Component {
+  changeShelfBook = (book, shelf) => {
+    this.props.changeShelfBook(book, shelf);
+  };
+
   render() {
-    const { currentlyReading, wantToRead, read } = this.props;
+    const currentlyReading = this.props.books.filter(
+      book => book.shelf === "currentlyReading"
+    );
+
+    const wantToRead = this.props.books.filter(
+      book => book.shelf === "wantToRead"
+    );
+
+    const read = this.props.books.filter(book => book.shelf === "read");
+
     return (
       <div className="home">
         <div className="header-title">
@@ -16,9 +29,18 @@ class ListBookCategories extends React.Component {
           <BooksBasedCategory
             books={currentlyReading}
             title="Currently Reading"
+            changeShelfBook={this.changeShelfBook}
           />
-          <BooksBasedCategory books={wantToRead} title="Want to Read" />
-          <BooksBasedCategory books={read} title="Read" />
+          <BooksBasedCategory
+            books={wantToRead}
+            title="Want to Read"
+            changeShelfBook={this.changeShelfBook}
+          />
+          <BooksBasedCategory
+            books={read}
+            title="Read"
+            changeShelfBook={this.changeShelfBook}
+          />
         </div>
         <div>
           <Link to="/search">Add Book</Link>
@@ -29,9 +51,8 @@ class ListBookCategories extends React.Component {
 }
 
 ListBookCategories.propTypes = {
-  currentlyReading: PropTypes.array.isRequired,
-  wantToRead: PropTypes.array.isRequired,
-  read: PropTypes.array.isRequired
+  books: PropTypes.array.isRequired,
+  changeShelfBook: PropTypes.func.isRequired
 };
 
 export default ListBookCategories;

@@ -8,33 +8,34 @@ import SearchBook from "./SearchBook";
 
 class App extends React.Component {
   state = {
-    currentlyReading: [],
-    wantToRead: [],
-    read: []
+    books: []
   };
 
   componentDidMount() {
     BooksAPI.getAll().then(books => {
-      for (const book of books) {
-        if (book.shelf === "currentlyReading") {
-          this.setState(currState => ({
-            currentlyReading: currState.currentlyReading.concat([book])
-          }));
-        } else if (book.shelf === "wantToRead") {
-          this.setState(currState => ({
-            wantToRead: currState.wantToRead.concat([book])
-          }));
-        } else if (book.shelf === "read") {
-          this.setState(currState => ({
-            read: currState.read.concat([book])
-          }));
-        }
-      }
+      this.setState(() => ({
+        books: books
+      }));
     });
   }
 
+  changeShelfBook = (book, shelf) => {
+    console.log(book.id, shelf);
+    BooksAPI.update(book, shelf)
+      .then(books => {
+        return BooksAPI.getAll();
+      })
+      .then(books => {
+        console.log(books);
+        this.setState(() => ({
+          books: books
+        }));
+      });
+  };
+
   render() {
-    const { currentlyReading, wantToRead, read } = this.state;
+    const { books } = this.state;
+
     return (
       <div className="App">
         <Route
@@ -42,9 +43,8 @@ class App extends React.Component {
           path="/"
           render={() => (
             <ListBookCategories
-              currentlyReading={currentlyReading}
-              wantToRead={wantToRead}
-              read={read}
+              books={books}
+              changeShelfBook={this.changeShelfBook}
             />
           )}
         />
