@@ -42,8 +42,10 @@ class ListBookCategories extends React.Component {
             changeShelfBook={this.changeShelfBook}
           />
         </div>
-        <div>
-          <Link to="/search">Add Book</Link>
+        <div className="open-search">
+          <Link className="link-add" to="/search">
+            Add Book
+          </Link>
         </div>
       </div>
     );
