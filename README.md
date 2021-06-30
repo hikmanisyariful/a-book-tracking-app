@@ -1,8 +1,26 @@
-# Getting Started with Create React App
+# A Book Tracking App
+
+`This is a APP which helps you to store books. You can order this APP to group books based 3 shelves that is 'Currently Reading', 'Want To Read', and 'Read'. Let's searching your books and tracking them.`
+
+# Installation
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+```bash
+npx create-react-app .
+```
+
+## Usage
+
+Before you run this program, do the following:
+
+```javascript
+npm install
+```
+
+This will install dependencies in package.json file
+
+# Getting Started
 
 In the project directory, you can run:
 

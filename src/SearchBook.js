@@ -1,23 +1,41 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
+import debounce from "lodash.debounce";
 import * as BooksAPI from "./BooksAPI";
 import BookCard from "./BookCard";
+import { Link } from "react-router-dom";
 
-class SearchBook extends React.Component {
-  state = {
-    query: "",
-    books: [],
-    error: false
-  };
+class SearchBox extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      value: "",
+      booksSearching: [],
+      error: false
+    };
+  }
 
-  updateQuery = query => {
+  handleChange = e => {
+    const { value } = e.target;
     this.setState({
-      query: query
+      value: value
     });
 
+    const querySearch = debounce(
+      () => this.debounceQuery(this.state.value),
+      1000,
+      {
+        trailing: true
+      }
+    );
+
+    querySearch();
+  };
+
+  debounceQuery = query => {
     if (query === "") {
       this.setState(() => ({
-        books: []
+        booksSearching: []
       }));
     } else {
       BooksAPI.search(query).then(books => {
@@ -26,8 +44,9 @@ class SearchBook extends React.Component {
             error: true
           }));
         } else {
+          const booksTemp = this.sortingShelfBook(books, this.props.books);
           this.setState(() => ({
-            books: books,
+            booksSearching: booksTemp,
             error: false
           }));
         }
@@ -35,12 +54,26 @@ class SearchBook extends React.Component {
     }
   };
 
+  sortingShelfBook = (booksSearch, booksLibrary) => {
+    let booksTemp = [];
+
+    for (let i = 0; i < booksSearch.length; i++) {
+      for (let j = 0; j < booksLibrary.length; j++) {
+        if (booksSearch[i].id === booksLibrary[j].id) {
+          booksSearch[i]["shelf"] = booksLibrary[j].shelf;
+        }
+      }
+      booksTemp.push(booksSearch[i]);
+    }
+    return booksTemp;
+  };
+
   changeShelfBook = (book, shelf) => {
     this.props.changeShelfBook(book, shelf);
   };
 
   render() {
-    const { books, error } = this.state;
+    const { booksSearching, error } = this.state;
     return (
       <div>
         <div className="search-books-bar">
@@ -52,16 +85,15 @@ class SearchBook extends React.Component {
             <input
               type="text"
               placeholder="Search by title or author"
-              value={this.state.query}
-              onChange={event => this.updateQuery(event.target.value)}
+              value={this.state.value}
+              onChange={this.handleChange}
             />
           </div>
         </div>
         <div className="search-books-results">
           {!error ? (
             <div className="books-card">
-              {/* {JSON.stringify(books)} */}
-              {books.map(book => (
+              {booksSearching.map(book => (
                 <BookCard
                   key={book.id}
                   book={book}
@@ -78,4 +110,9 @@ class SearchBook extends React.Component {
   }
 }
 
-export default SearchBook;
+SearchBox.propTypes = {
+  books: PropTypes.array.isRequired,
+  changeShelfBook: PropTypes.func.isRequired
+};
+
+export default SearchBox;

@@ -2,36 +2,21 @@ import React from "react";
 import PropTypes from "prop-types";
 
 class BookChanger extends React.Component {
-  state = {
-    value: ""
-  };
-
-  componentDidMount() {
-    this.setState(() => ({
-      value: this.props.shelf
-    }));
-  }
+  state = {};
 
   handleChange = shelf => {
     this.setState({
-      value: shelf
+      shelfOption: shelf
     });
     this.props.changeShelf(shelf);
   };
 
-  handleSubmit = event => {
-    event.preventDefault();
-    this.props.changeShelf(this.state.value);
-  };
-
   render() {
+    const value = this.props.shelf;
     return (
-      <form
-        className="book-shelf-changer"
-        onSubmit={event => this.handleSubmit(event)}
-      >
+      <form className="book-shelf-changer">
         <select
-          value={this.state.value}
+          value={this.state.shelfOption || value}
           onChange={event => this.handleChange(event.target.value)}
         >
           <option value="move" disabled>

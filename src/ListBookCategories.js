@@ -10,15 +10,25 @@ class ListBookCategories extends React.Component {
   };
 
   render() {
-    const currentlyReading = this.props.books.filter(
-      book => book.shelf === "currentlyReading"
-    );
-
-    const wantToRead = this.props.books.filter(
-      book => book.shelf === "wantToRead"
-    );
-
-    const read = this.props.books.filter(book => book.shelf === "read");
+    const shelves = [
+      {
+        title: "Currently Reading",
+        id: "currentlyReading",
+        books: this.props.books.filter(
+          book => book.shelf === "currentlyReading"
+        )
+      },
+      {
+        title: "Want To Read",
+        id: "wantToRead",
+        books: this.props.books.filter(book => book.shelf === "wantToRead")
+      },
+      {
+        title: "Read",
+        id: "read",
+        books: this.props.books.filter(book => book.shelf === "read")
+      }
+    ];
 
     return (
       <div className="home">
@@ -26,21 +36,14 @@ class ListBookCategories extends React.Component {
           <h1>A Book Tracking APP</h1>
         </div>
         <div className="list-books">
-          <BooksBasedCategory
-            books={currentlyReading}
-            title="Currently Reading"
-            changeShelfBook={this.changeShelfBook}
-          />
-          <BooksBasedCategory
-            books={wantToRead}
-            title="Want to Read"
-            changeShelfBook={this.changeShelfBook}
-          />
-          <BooksBasedCategory
-            books={read}
-            title="Read"
-            changeShelfBook={this.changeShelfBook}
-          />
+          {shelves.map(shelf => (
+            <BooksBasedCategory
+              key={shelf.id}
+              books={shelf.books}
+              title={shelf.title}
+              changeShelfBook={this.changeShelfBook}
+            />
+          ))}
         </div>
         <div className="open-search">
           <Link className="link-add" to="/search">
